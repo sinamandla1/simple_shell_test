@@ -16,11 +16,12 @@ char *replace_vars(char *str)
 		return (NULL);
 	}
 	snprintf(pid_str, sizeof(pid_str), "%d", getpid());
-	replaced = replace_vars(replaced, "$$", pid_str);
+	replaced = strdup(str);
 
 	if (!replaced)
 	{
-		return NULL;
+		fprintf(stderr, "Memory allocation failed\n");
+		return (NULL);
 	}
 	p = replaced;
 	while ((pos = strcspn(p, "$")) != strlen(p))
@@ -40,12 +41,23 @@ char *replace_vars(char *str)
 			if (!var)
 			{
 				free(replaced);
+				fprintf(stderr, "Memory allocation failed\n");
 				return (NULL);
 			}
 			strncpy(var, p + pos + 1, var_pos);
 			var[var_pos] = '\0';
 
-			if (getenv(var))
+			if (strcmp(var, "$$") == 0)
+			{
+				strcat(replaced, pid_str);
+			}
+			else if (strcmp(var, "?") == 0)
+			{
+				char status_str[16];
+				snprintf(status_str, sizeof(status_str), "%d", status);
+				strcat(replaced, status_str);
+			}
+			else if (getenv(var))
 			{
 				strcat(replaced, getenv(var));
 			}
@@ -69,7 +81,7 @@ int execute_vars(char *command)
 {
 	char *replaced = NULL, *tokens[MAX_TOKENS];
 	int token_count, status;
-	replaced = replace_vars(command);
+	replaced = replace_vars(command, 0);
 
 	if (!replaced)
 	{
@@ -78,6 +90,7 @@ int execute_vars(char *command)
 	}
 	tokenize_command(replaced, tokens, &token_count);
 
+	free(replaced);
 	if (strcmp(tokens[0], "cd") == 0)
 	{
 		if (token_count > 1)
@@ -86,7 +99,13 @@ int execute_vars(char *command)
 		}
 		else
 		{
-			status = execute_command(getenv("HOME"));
+			char *home_dir = getenv("HOME");
+			if (!home_dir)
+			{
+				fprintf(stderr, "HOME directory not found.\n");
+				return (1);
+			}
+			status = execute_command(home_dir);
 		}
 	}
 	else if (strcmp(tokens[0], "exit") == 0)

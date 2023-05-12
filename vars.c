@@ -5,10 +5,10 @@
  * @status: the exit status of the last command executed
  * Return: a pointer to the replaced string, or NULL on failure
  */
-char *replace_vars(char *str, int status)
+char *replace_vars(char *str)
 {
 	char *replaced = NULL, *p, *var;
-	char status_str[4], pid_str[16];
+	char pid_str[16];
 	int len, var_len, pos, var_pos;
 
 	if (!str)
@@ -16,7 +16,7 @@ char *replace_vars(char *str, int status)
 		return (NULL);
 	}
 	snprintf(pid_str, sizeof(pid_str), "%d", getpid());
-	replaced = replace_str(replaced, "$$", pid_str);
+	replaced = replace_vars(replaced, "$$", pid_str);
 
 	if (!replaced)
 	{
@@ -61,21 +61,23 @@ char *replace_vars(char *str, int status)
 }
 
 /**
- * execute_command - execute a command and return its exit status
+ * execute_vars - execute a command and return its exit status
  * @command: the command to execute
  * Return: the exit status of the command
  */
-int execute_command(char *command)
+int execute_vars(char *command)
 {
 	char *replaced = NULL, *tokens[MAX_TOKENS];
 	int token_count, status;
-	replaced = replace_vars(command, g_last_status);
+	replaced = replace_vars(command);
 
 	if (!replaced)
 	{
 		fprintf(stderr, "Error: failed to replace variables\n");
-		return 1;
+		return (1);
 	}
+	tokenize_command(replaced, tokens, &token_count);
+
 	if (strcmp(tokens[0], "cd") == 0)
 	{
 		if (token_count > 1)
@@ -86,38 +88,38 @@ int execute_command(char *command)
 		{
 			status = execute_command(getenv("HOME"));
 		}
-		else if (strcmp(tokens[0], "exit") == 0)
+	}
+	else if (strcmp(tokens[0], "exit") == 0)
+	{
+		if (token_count > 1)
 		{
-			if (token_count > 1)
-			{
-				status = _exiting(tokens[1]);
-			}
-			else
-			{
-				status = _exiting("0");
-			}
+			status = _exiting(tokens[1]);
 		}
-		else if (strcmp(tokens[0], "my_environ") == 0)
+		else
 		{
-			status = execute_my_environ();
-		}
-		else if (strcmp(tokens[0], "unsetenv") == 0)
-		{
-			if (args[1] == NULL || args[2] != NULL)
-			{
-				print_error("Invalid arguments");
-				return (-1);
-			}
-			if (unset_environ(args[1]) == -1)
-			{
-				return (-1);
-			}
-			else
-			{
-				print_error("Command not found");
-				return (-1);
-			}
+			status = _exiting("0");
 		}
 	}
-	return (0);
+	else if (strcmp(tokens[0], "my_environ") == 0)
+	{
+		status = my_environ();
+	}
+	else if (strcmp(tokens[0], "unsetenv") == 0)
+	{
+		if (tokens[1] == NULL || tokens[2] != NULL)
+		{
+			fprintf(stderr, "Invalid arguments\n");
+			return (-1);
+		}
+		if (unset_environ(tokens[1]) == -1)
+		{
+			return (-1);
+		}
+		else
+		{
+			fprintf(stderr, "Command not found\n");
+			return (-1);
+		}
+	}
+	return (status);
 }

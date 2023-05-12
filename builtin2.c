@@ -11,19 +11,25 @@ int change_dir(int argc, char *argv[])
 
 	if (argc == 1)
 	{
-		*dir = getenv("HOME");
+		dir = getenv("HOME");
 	}
 	else if (strcmp(argv[1], "-") == 0)
 	{
-		*dir = getenv("OLDPWD");
+		dir = getenv("OLDPWD");
 	}
 	else
 	{
-		*dir = argv[1];
+		dir = argv[1];
 	}
 	updt_cwd = getcwd(NULL, 0);
+	
+	if (updt_cwd == NULL)
+	{
+		perror("getcwd");
+		return (1);
+	}
 	setenv("OLDPWD", getenv("PWD"), 1);
-	setenv("PWD", updt_cwd, 1);
+	setenv("PWD", dir, 1);
 	free(updt_cwd);
 	return (0);
 }
@@ -34,7 +40,6 @@ int change_dir(int argc, char *argv[])
  */
 void alias_printer(void)
 {
-	Alias *alias_head = NULL;
 	Alias *current_node = alias_head;
 
 	while (current_node != NULL)
@@ -84,11 +89,6 @@ void alias_define(char *name, char *val)
 			return;
 		}
 		current_node = current_node->next;
-	}
-	if (new_alias == NULL)
-	{
-		perror("malloc");
-		exit(1);
 	}
 	strncpy(new_alias->name, name, MAX_ALIAS_NAME);
 	strncpy(new_alias->val, val, MAX_ALIAS_VALUE);

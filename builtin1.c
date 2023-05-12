@@ -6,7 +6,7 @@
  */
 void _exiting(char *status)
 {
-	int exit_status = atoi(status);
+	int exit_status = (int)strtol(status, NULL, 10);
 
 	printf("Exiting shell..status: %d\n", exit_status);
 	exit(exit_status);
@@ -19,7 +19,7 @@ void _exiting(char *status)
  */
 int my_environ(char *details)
 {
-	int x;
+	int x = 0;
 
 	while (details[x])
 	{
@@ -27,7 +27,7 @@ int my_environ(char *details)
 		{
 			return (1);
 		}
-		if (write(STDOUT_FILENO, "\n", 0) < 0)
+		if (write(STDOUT_FILENO, "\n", 1) < 0)
 		{
 			return (1);
 		}
@@ -57,7 +57,7 @@ int set_environ(char *name, char *value)
 /**
  * unset_environ - Remove an environment variable
  * @vari: envir variable
- * Return: 0 or otherwise
+ * Return: 0 or -1
  */
 int unset_environ(char *vari)
 {
@@ -66,6 +66,7 @@ int unset_environ(char *vari)
 	if (result != 0)
 	{
 		fprintf(stderr, "unsetenv failed: %s\n", strerror(errno));
+		return (-1);
 	}
 	return (result);
 }

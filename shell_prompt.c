@@ -6,7 +6,7 @@
 int main(int argc, char **argv)
 {
 	char command[100];
-	char *tokens[MAX_TOKENS], *separator = ";";
+	char *tokens[MAX_TOKENS];
 	int token_count, i, status;
 	FILE *fp = NULL;
 	
@@ -19,6 +19,7 @@ int main(int argc, char **argv)
 		if (argc > 1)
 		{
 			fp = fopen(argv[1], "r");
+
 			if (fp == NULL)
 			{
 				perror("Failed to open file");
@@ -48,7 +49,7 @@ int main(int argc, char **argv)
 		else
 		{
 			tokenize_command(command, tokens, &token_count);
-			if (command[0] == '\0')
+			if (tokens[0] == NULL)
 			{
 				continue;
 			}
@@ -72,13 +73,12 @@ int main(int argc, char **argv)
 					tokens[i] = NULL;
 				}
 				printf("Command exited with status: %d\n", status);
-				}
 			}
 		}
 	}
 	if (fp != NULL)
 	{
-		close(fp);
+		fclose(fp);
 	}
 	return (0);
 }

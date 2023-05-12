@@ -54,7 +54,7 @@ void print_aliases(char *name);
 void define_alias(char *name, char *val);
 
 /* for gettheline.c */
-char *get_line(void);
+char *get_line(int *length, int *position);
 
 /* for Tokenize.c */
 void tokenize_command(const char *command, char **tokens, int *token_count);
@@ -62,5 +62,9 @@ void tokenize_command(const char *command, char **tokens, int *token_count);
 /* paths.c */
 int check_command_exists(const char *command);
 int execute_command(char *command);
+
+/* vars.c */
+char *replace_vars(char *str);
+int execute_vars(char *command);
 
 #endif

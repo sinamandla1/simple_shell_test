@@ -94,20 +94,11 @@ int execute_vars(char *command)
 	free(replaced);
 	if (strcmp(tokens[0], "cd") == 0)
 	{
-		if (token_count > 1)
+		if (change_dir(token_count, tokens) != 0)
 		{
-			status = execute_command(tokens[1]);
+			fprintf(stderr, "cd: Failed to change directory\n");
 		}
-		else
-		{
-			char *home_dir = getenv("HOME");
-			if (!home_dir)
-			{
-				fprintf(stderr, "HOME directory not found.\n");
-				return (1);
-			}
-			status = execute_command(home_dir);
-		}
+		return (0);
 	}
 	else if (strcmp(tokens[0], "exit") == 0)
 	{

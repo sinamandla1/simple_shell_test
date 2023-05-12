@@ -10,25 +10,38 @@ int main(int argc, char **argv)
 	int token_count, i, status;
 	FILE *fp = NULL;
 	
+	if (argc > 1)
+	{
+		fp = fopen(argv[1], "r");
+
+		if (fp == NULL)
+		{
+			perror("Failed to open file");
+			exit(EXIT_FAILURE);
+		}
+	}
 	while (1)
 	{
-		printf("$ ");
-		fflush(stdout);
-		fgets(command, sizeof(command), stdin);
-		command[strcspn(command, "\n")] = '\0';
-		if (argc > 1)
+		if (fp == NULL)
 		{
-			fp = fopen(argv[1], "r");
-
-			if (fp == NULL)
+			printf("$ ");
+			fflush(stdout);
+			fgets(command, sizeof(command), stdin);
+			command[strcspn(command, "\n")] = '\0';
+			remove_comment(command);
+		}
+		else
+		{
+			if (fgets(command, sizeof(command), fp) == NULL)
 			{
-				perror("Failed to open file");
-				exit(EXIT_FAILURE);
+				break;
 			}
+			command[strcspn(command, "\n")] = '\n';
+			printf("$ %s\n", command);
 		}
 		if (command[0] == '\0')
 		{
-			break;
+			continue;
 		}
 		if (strcmp(command, "exit") == 0)
 		{

@@ -10,7 +10,7 @@ int interact_mode(int stdin_fd)
 	{
 		return (0);
 	}
-	if (isatty(STDIN_FILENO))
+	if (isatty(stdin_fd))
 	{
 		return (1);
 	}
@@ -47,11 +47,7 @@ int isDelimiter(char *str)
  */
 int is_alpha(int c)
 {
-	if (c >= 'A' && c <= 'Z')
-	{
-		return (1);
-	}
-	if (c >= 'a' && c <= 'z')
+	if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z'))
 	{
 		return (1);
 	}
@@ -71,8 +67,12 @@ int string_to_int(const char *str, int *res)
 {
 	char *ptr;
 	long val = strtol(str, &ptr, 10);
-	
-	if (str == ptr || *ptr != '\0' || val < INT_MIN || val > INT_MAX)
+
+	if (str == NULL)
+	{
+		return (1);
+	}
+	if (*ptr != '\0' || val < INT_MIN || val > INT_MAX)
 	{
 		return (1);
 	}

@@ -67,4 +67,7 @@ int execute_command(char *command);
 char *replace_vars(char *str);
 int execute_vars(char *command);
 
+/* comments.c */
+void remove_comment(char *command);
+
 #endif

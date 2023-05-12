@@ -9,7 +9,8 @@ char *replace_vars(char *str)
 {
 	char *replaced = NULL, *p, *var;
 	char pid_str[16];
-	int len, var_len, pos, var_pos;
+	int len, var_len, var_pos, status = 0;
+	size_t pos;
 
 	if (!str)
 	{
@@ -81,7 +82,7 @@ int execute_vars(char *command)
 {
 	char *replaced = NULL, *tokens[MAX_TOKENS];
 	int token_count, status;
-	replaced = replace_vars(command, 0);
+	replaced = replace_vars(command);
 
 	if (!replaced)
 	{
@@ -112,24 +113,24 @@ int execute_vars(char *command)
 	{
 		if (token_count > 1)
 		{
-			status = _exiting(tokens[1]);
+			_exiting(tokens[1]);
 		}
 		else
 		{
-			status = _exiting("0");
+			_exiting("0");
 		}
 	}
 	else if (strcmp(tokens[0], "my_environ") == 0)
 	{
-		status = my_environ();
+		status = my_environ("");
 	}
 	else if (strcmp(tokens[0], "unsetenv") == 0)
 	{
-		if (tokens < 2 || tokens > 2)
+		if (token_count < 2 || token_count > 2)
 		{
 			fprintf(stderr, "Invalid arguments\n");
 		}
-		else if (unset_environ(tokens[1]) == -1)
+		if (unset_environ(tokens[1]) == -1)
 		{
 			fprintf(stderr, "Error unsetting environment variable\n");
 		}
@@ -141,7 +142,7 @@ int execute_vars(char *command)
 	}
 	else
 	{
-		status = execute_command(tokens[0]);
+		status = execute_command(command);
 	}
 	return (status);
 }

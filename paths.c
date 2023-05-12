@@ -15,7 +15,7 @@ int check_command_exists(const char *command)
 		char *path_entry = malloc(strlen(token) + strlen(command) + 2);
 		sprintf(path_entry, "%s/%s", token, command);
 
-		if (access(path_entry, F_OK) == 0)
+		if (access(path_entry, X_OK) == 0)
 		{
 			free(path_entry);
 			free(path_copy);
@@ -37,10 +37,11 @@ int execute_command(char *command)
 {
 	pid_t pid = fork();
 	char cwd[1024];
+	char *home_dir = getenv("HOME");
+	int status;
 
 	if (strcmp(command, "cd") == 0)
 	{
-		char *home_dir = getenv("HOME");
 		if (home_dir == NULL)
 		{
 			fprintf(stderr, "HOME directory not found.\n");
@@ -80,7 +81,6 @@ int execute_command(char *command)
 	}
 	else
 	{
-		int status;
 		waitpid(pid, &status, 0);
 		return WEXITSTATUS(status);
 	}

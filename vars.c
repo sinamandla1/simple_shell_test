@@ -125,20 +125,23 @@ int execute_vars(char *command)
 	}
 	else if (strcmp(tokens[0], "unsetenv") == 0)
 	{
-		if (tokens[1] == NULL || tokens[2] != NULL)
+		if (tokens < 2 || tokens > 2)
 		{
 			fprintf(stderr, "Invalid arguments\n");
-			return (-1);
 		}
-		if (unset_environ(tokens[1]) == -1)
+		else if (unset_environ(tokens[1]) == -1)
 		{
-			return (-1);
+			fprintf(stderr, "Error unsetting environment variable\n");
 		}
 		else
 		{
 			fprintf(stderr, "Command not found\n");
-			return (-1);
 		}
+		status = -1;
+	}
+	else
+	{
+		status = execute_command(tokens[0]);
 	}
 	return (status);
 }

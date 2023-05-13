@@ -8,7 +8,7 @@ int main(int argc, char **argv)
 	char command[MAX_COMMAND_LENGTH];
 	char *tokens[MAX_TOKENS];
 	int token_count, i, status;
-	int command_length, command_position;
+	int command_length = 0, command_position = 0;
 	FILE *fp = NULL;
 	
 	if (argc > 1)
@@ -56,11 +56,11 @@ int main(int argc, char **argv)
 		}
 		else if (strcmp(command, "set_environ") == 0)
 		{
-			set_environ(command, command);
+			set_environ(tokens[1], tokens[1]);
 		}
 		else if (strcmp(command, "unset_environ") == 0)
 		{
-			unset_environ(command);
+			unset_environ(tokens[1]);
 		}
 		else
 		{

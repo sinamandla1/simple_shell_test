@@ -5,7 +5,7 @@
  */
 int main(int argc, char **argv)
 {
-	char command[100];
+	char command[MAX_COMMAND_LENGTH];
 	char *tokens[MAX_TOKENS];
 	int token_count, i, status;
 	FILE *fp = NULL;
@@ -26,13 +26,15 @@ int main(int argc, char **argv)
 		{
 			printf("$ ");
 			fflush(stdout);
-			fgets(command, sizeof(command), stdin);
-			command[strcspn(command, "\n")] = '\0';
+			if (get_line(command, MAX_COMMAND_LENGTH) == NULL)
+			{
+				break;
+			}
 			remove_comment(command);
 		}
 		else
 		{
-			if (fgets(command, sizeof(command), fp) == NULL)
+			if (get_line(command, MAX_COMMAND_LENGTH) == NULL)
 			{
 				break;
 			}

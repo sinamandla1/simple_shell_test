@@ -22,11 +22,11 @@ char *get_line(int *length, int *position)
 			*length = read(STDIN_FILENO, buffer, BUFFER_SIZE);
 			if (*length < 0)
 			{
-				return NULL;
+				return (NULL);
 			}
 			else if (*length == 0)
 			{
-				return line;
+				return (line);
 			}
 			*position = 0;
 		}
@@ -38,13 +38,13 @@ char *get_line(int *length, int *position)
 
 			if (line == NULL)
 			{
-				return NULL;
+				return (NULL);
 			}
 			for (i = 0; i < *length; i++)
 			{
 				line[i] = buffer[i];
 			}
-			return line;
+			return (line);
 		}
 		(*position)++;
 	}

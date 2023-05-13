@@ -8,6 +8,7 @@ int main(int argc, char **argv)
 	char command[MAX_COMMAND_LENGTH];
 	char *tokens[MAX_TOKENS];
 	int token_count, i, status;
+	int command_length, command_position;
 	FILE *fp = NULL;
 	
 	if (argc > 1)
@@ -26,7 +27,7 @@ int main(int argc, char **argv)
 		{
 			printf("$ ");
 			fflush(stdout);
-			if (get_line(command, MAX_COMMAND_LENGTH) == NULL)
+			if (get_line(&command_length, &command_position) == NULL)
 			{
 				break;
 			}
@@ -34,7 +35,7 @@ int main(int argc, char **argv)
 		}
 		else
 		{
-			if (get_line(command, MAX_COMMAND_LENGTH) == NULL)
+			if (get_line(&command_length, &command_position) == NULL)
 			{
 				break;
 			}

@@ -1,14 +1,16 @@
 #include "shell.h"
+#include <unistd.h>
 /**
  * _exiting - closes the shell
- * @status: details of the shel env exit
- * Return: exit status
  */
 void _exiting(char *status)
 {
-	int exit_status = (int)strtol(status, NULL, 10);
+	int exit_status = 0;
 
-	printf("Exiting shell..status: %d\n", exit_status);
+	if (status != NULL)
+	{
+		exit_status = atoi(status);
+	}
 	exit(exit_status);
 }
 
@@ -17,13 +19,14 @@ void _exiting(char *status)
  * @details: the environment arguments
  * Return: 0 on success or 1
  */
-int my_environ(char *details)
+int my_environ(void)
 {
-	int x = 0;
+	extern char **environ;
+	char **env = environ;
 
-	while (details[x])
+	while (*env)
 	{
-		if (write(STDOUT_FILENO, &details[x], strlen(&details[x])) < 0)
+		if (write(STDOUT_FILENO, *env, strlen(*env)) < 0)
 		{
 			return (1);
 		}
@@ -31,7 +34,7 @@ int my_environ(char *details)
 		{
 			return (1);
 		}
-		x++;
+		env++;
 	}
 	return (0);
 }
@@ -45,13 +48,17 @@ int my_environ(char *details)
  */
 int set_environ(char *name, char *value)
 {
-	int result = setenv(name, value, 1);
-
-	if (result != 0)
+	if (!name || !value)
 	{
-		fprintf(stderr, "setenv failed: %s\n", strerror(errno));
+		fprintf(stderr, "setenv: Invalid arguments\n");
+		return (-1);
 	}
-	return (result);
+	if (setenv(name, value, 1) != 0)
+	{
+		fprintf(stderr, "setenv: Failed to set environment\n");
+		return (-1);
+	}
+	return (0);
 }
 
 /**
@@ -61,13 +68,15 @@ int set_environ(char *name, char *value)
  */
 int unset_environ(char *vari)
 {
-	int result = unsetenv(vari);
-
-	if (result != 0)
+	if (!vari)
 	{
-		fprintf(stderr, "unsetenv failed: %s\n", strerror(errno));
+		fprintf(stderr, "unsetenv: Invalid argument\n");
 		return (-1);
 	}
-	return (result);
+	if (unsetenv(vari) != 0)
+	{
+		fprintf(stderr, "unsetenv: failed to unset environment\n");
+		return (-1);
+	}
+	return (0);
 }
-

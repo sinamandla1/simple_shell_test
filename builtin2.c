@@ -1,4 +1,5 @@
 #include "shell.h"
+Alias *alias_head = NULL;
 /**
  * change_dir - Changes the current directory of the process
  * @argc: number if arg

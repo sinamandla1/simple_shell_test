@@ -43,7 +43,7 @@ int string_to_int(const char *str, int *result);
 
 /* for builtin1.c */
 void _exiting(char *status);
-int my_environ(char *details);
+int my_environ(void);
 int set_environ(char *name, char *value);
 int unset_environ(char *vari);
 
@@ -52,6 +52,10 @@ int change_dir(int argc, char *argv[]);
 void alias_printer(void);
 void print_aliases(char *name);
 void define_alias(char *name, char *val);
+
+/* builtin3.c */
+void free_alias_list(void);
+void free_env_list(char **env_list);
 
 /* for gettheline.c */
 char *get_line(int *length, int *position);

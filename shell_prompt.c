@@ -49,7 +49,7 @@ int main(int argc, char **argv)
 		}
 		else if (strcmp(command, "my_environ") == 0)
 		{
-			my_environ(command);
+			my_environ();
 		}
 		else if (strcmp(command, "set_environ") == 0)
 		{

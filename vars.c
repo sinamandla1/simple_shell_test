@@ -113,7 +113,7 @@ int execute_vars(char *command)
 	}
 	else if (strcmp(tokens[0], "my_environ") == 0)
 	{
-		status = my_environ("");
+		status = my_environ();
 	}
 	else if (strcmp(tokens[0], "unsetenv") == 0)
 	{
